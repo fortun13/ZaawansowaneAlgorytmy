@@ -1,6 +1,8 @@
 package pl.edu.agh.huffman.main;
 
-import pl.edu.agh.huffman.algorithm.HuffmanCoding;
+import pl.edu.agh.huffman.algorithm.HuffmanCodingIterative;
+import pl.edu.agh.huffman.algorithm.HuffmanCodingRecursive;
+import pl.edu.agh.huffman.algorithm.IHuffmanCoding;
 import pl.edu.agh.huffman.model.BinaryTree;
 
 import java.io.*;
@@ -14,20 +16,28 @@ public class Main {
 
     //TODO length of input text should be multiplied by 8 (since one character is represented by 8 bits)
 
-    private static int codingLength = 1;
+    private static final int CODING_LENGTH = 2;
 
     private static Map<String, Integer> map = new HashMap<>();
-    private static final File INPUT_FILE = new File("tobe.txt");
+    private static final File INPUT_FILE = new File("seneca.txt");
+
+    private static final File COMPRESSED_FILE = new File("compressed");
+    private static final File OUTPUT_FILE = new File("decoded");
+
+    private static int inputFileCharsCount = 0;
+    private static int compressedFileCharsCount = 0;
 
     public static void main(String[] args) {
         try {
             readFile(INPUT_FILE);
-//            System.out.println(map.toString());
-            HuffmanCoding hc = new HuffmanCoding();
-            BinaryTree bt = hc.constructTree(map);
-            System.out.println(bt.toString());
-            compress(INPUT_FILE, new File("output.txt"), bt);
-            decompress(new File("output.txt"), new File("decoded.txt"), bt);
+            IHuffmanCoding huffman = new HuffmanCodingRecursive();
+//            IHuffmanCoding huffman2 = new HuffmanCodingRecursive();
+            BinaryTree bt = huffman.constructTree(map);
+//            BinaryTree bt2 = huffman2.constructTree(map);
+            compress(INPUT_FILE, COMPRESSED_FILE, bt);
+            decompress(COMPRESSED_FILE, OUTPUT_FILE, bt);
+            inputFileCharsCount = inputFileCharsCount*8;
+            System.out.println("K = " + (((double)(inputFileCharsCount - compressedFileCharsCount))/(double)inputFileCharsCount));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -37,10 +47,12 @@ public class Main {
         BufferedReader br = new BufferedReader(new FileReader(f));
         int r;
         while ((r = br.read()) != -1) {
+            inputFileCharsCount++;
             String c = String.valueOf((char)r);
-            for (int i=1;i<codingLength;i++) {
+            for (int i=1;i<CODING_LENGTH;i++) {
                 r = br.read();
                 c += String.valueOf((char)r);
+                inputFileCharsCount++;
             }
             if (map.containsKey(c)) {
                 map.put(c, map.get(c) + 1);
@@ -57,7 +69,7 @@ public class Main {
         int r;
         while ((r = br.read()) != -1) {
             String c = String.valueOf((char)r);
-            for (int i=1;i<codingLength;i++) {
+            for (int i=1;i<CODING_LENGTH;i++) {
                 r = br.read();
                 c += String.valueOf((char)r);
             }
@@ -73,6 +85,7 @@ public class Main {
         BufferedWriter bw = new BufferedWriter(new FileWriter(destination));
         int r;
         while ((r = br.read()) != -1) {
+            compressedFileCharsCount++;
 //            String c = String.valueOf((char)r);
             BinaryTree leaf = coding;
             while (leaf.getLeft() != null || leaf.getRight() != null) {
@@ -84,6 +97,7 @@ public class Main {
                 }
                 if (leaf.getLeft() != null || leaf.getRight() != null) {
                     r = br.read();
+                    compressedFileCharsCount++;
                 }
             }
             bw.write(leaf.getCharacters());

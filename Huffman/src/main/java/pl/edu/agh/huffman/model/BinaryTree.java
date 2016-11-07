@@ -77,4 +77,27 @@ public class BinaryTree {
     public String getCharacters() {
         return characters;
     }
+
+    public int getOccurrences() {
+        return occurrences;
+    }
+
+    public void computePrefixes() {
+        if (left != null) {
+            left.setPrefix("0");
+        }
+        if (right != null) {
+            right.setPrefix("1");
+        }
+    }
+
+    private void setPrefix(String s) {
+        this.prefix = s;
+        if (left != null) {
+            left.setPrefix(s + "0");
+        }
+        if (right != null) {
+            right.setPrefix(s + "1");
+        }
+    }
 }

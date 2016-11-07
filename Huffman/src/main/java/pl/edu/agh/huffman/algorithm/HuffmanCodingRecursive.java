@@ -7,20 +7,26 @@ import java.util.*;
 /**
  * Created by Kuba Fortunka on 07.11.2016.
  */
-public class HuffmanCoding {
+public class HuffmanCodingRecursive implements IHuffmanCoding {
 
     public BinaryTree constructTree(Map<String, Integer> map) {
-        List<String> characters = new ArrayList<>(map.keySet());
-        Collections.sort(characters, (s1, s2) -> {
-            Integer popularity1 = map.get(s1);
-            Integer popularity2 = map.get(s2);
-            return popularity1.compareTo(popularity2);
-        });
+        int leftOcc = Integer.MAX_VALUE;
+        int rightOcc = Integer.MAX_VALUE;
+        String leftCh = "";
+        String rightCh = "";
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            int val = entry.getValue();
+            if (val < leftOcc) {
+                rightOcc = leftOcc;
+                rightCh = leftCh;
+                leftOcc = val;
+                leftCh = entry.getKey();
+            } else if (val < rightOcc) {
+                rightOcc = val;
+                rightCh = entry.getKey();
+            }
+        }
         BinaryTree ans;
-        String leftCh = characters.get(0);
-        String rightCh = characters.get(1);
-        Integer leftOcc = map.get(leftCh);
-        Integer rightOcc = map.get(rightCh);
         if (map.size() == 2) {
             ans = new BinaryTree(
                     new BinaryTree(null, null, leftCh, leftOcc, "0"),
