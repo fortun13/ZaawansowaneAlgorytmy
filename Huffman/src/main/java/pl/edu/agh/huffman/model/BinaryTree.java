@@ -1,0 +1,80 @@
+package pl.edu.agh.huffman.model;
+
+/**
+ * Created by Kuba Fortunka on 07.11.2016.
+ */
+public class BinaryTree {
+
+    BinaryTree left;
+    BinaryTree right;
+    String characters;
+    int occurrences;
+    String prefix;
+
+    public BinaryTree(BinaryTree left, BinaryTree right, String characters, int occurrences, String prefix) {
+        this.left = left;
+        this.right = right;
+        this.characters = characters;
+        this.occurrences = occurrences;
+        this.prefix = prefix;
+    }
+
+    public BinaryTree findByCharacters(String s) {
+        if (characters.equals(s)) {
+            return this;
+        } else {
+            if (left == null && right == null) {
+                return null;
+            }
+            BinaryTree tmp = left.findByCharacters(s);
+            if (tmp == null) {
+                return right.findByCharacters(s);
+            } else {
+                return tmp;
+            }
+        }
+    }
+
+    public void modify(BinaryTree left, BinaryTree right, String characters, int occurences, String prefix) {
+        this.left = left;
+        this.right = right;
+        this.characters = characters;
+        this.occurrences = occurences;
+        this.prefix = prefix;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    private String getData() {
+        return "characters: " + characters + "; occurrences: " + occurrences + "; prefix: " + prefix;
+    }
+
+    @Override
+    public String toString() {
+        return toString(new StringBuilder(), this).toString();
+    }
+
+    private static StringBuilder toString(StringBuilder string, BinaryTree node) {
+        string.append('{').append("\n");
+        if (node != null) {
+            string.append(node.getData());
+            toString(string.append(", "), node.getLeft());
+            toString(string.append(", "), node.getRight());
+        }
+        return string.append('}');
+    }
+
+    public BinaryTree getLeft() {
+        return left;
+    }
+
+    public BinaryTree getRight() {
+        return right;
+    }
+
+    public String getCharacters() {
+        return characters;
+    }
+}
