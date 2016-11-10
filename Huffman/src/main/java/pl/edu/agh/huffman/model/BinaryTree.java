@@ -100,4 +100,5 @@ public class BinaryTree {
             right.setPrefix(s + "1");
         }
     }
+
 }

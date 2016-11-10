@@ -1,63 +1,31 @@
 package pl.edu.agh.huffman.algorithm;
 
-import javafx.util.Pair;
 import pl.edu.agh.huffman.model.BinaryTree;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by Jakub Fortunka on 07.11.2016.
  */
-public class HuffmanCodingIterative implements IHuffmanCoding {
+public class HuffmanCodingIterative extends HuffmanCoding {
 
-    public BinaryTree constructTree(Map<String, Integer> map) {
-        List<BinaryTree> nodes = map.entrySet().stream()
+    @Override
+    protected BinaryTree innerConstructTree(PriorityQueue<Map.Entry<String, Integer>> list) {
+        PriorityQueue<BinaryTree> nodes = new PriorityQueue<>((left, right) -> Integer.valueOf(left.getOccurrences()).compareTo(right.getOccurrences()));
+        list.stream()
                 .map(e -> new BinaryTree(null, null, e.getKey(), e.getValue(), ""))
-                .collect(Collectors.toCollection(LinkedList::new));
+                .forEach(nodes::offer);
         int n = nodes.size();
         while (n >= 2) {
-            Pair<Optional<BinaryTree>, Optional<BinaryTree>> lowest = getLowestTwo(nodes);
-            Optional<BinaryTree> maybeX = lowest.getKey();
-            Optional<BinaryTree> maybeY = lowest.getValue();
-            if (maybeX.isPresent() && maybeY.isPresent()) {
-                BinaryTree x = maybeX.get();
-                BinaryTree y = maybeY.get();
-                nodes.remove(x);
-                nodes.remove(y);
-                BinaryTree tmp = new BinaryTree(x,y,x.getCharacters()+y.getCharacters(), x.getOccurrences()+y.getOccurrences(), "");
-                nodes.add(tmp);
-            } else {
-                System.out.println("YABAIDE :(");
-                return null;
-            }
+            BinaryTree x = nodes.remove();
+            BinaryTree y = nodes.remove();
+            BinaryTree tmp = new BinaryTree(x,y,x.getCharacters()+y.getCharacters(), x.getOccurrences()+y.getOccurrences(), "");
+            nodes.offer(tmp);
             n-=1;
         }
-        System.out.println("BREAKPOINT");
-        BinaryTree ans = nodes.get(0);
+        BinaryTree ans = nodes.poll();
         ans.computePrefixes();
-        return nodes.get(0);
-//        return null;
+        return ans;
     }
 
-    private Pair<Optional<BinaryTree>, Optional<BinaryTree>> getLowestTwo(List<BinaryTree> nodes) {
-        int left = Integer.MAX_VALUE;
-        int right = Integer.MAX_VALUE;
-        Optional<BinaryTree> btLeft = Optional.empty();
-        Optional<BinaryTree> btRight = Optional.empty();
-        for (int i=0;i<nodes.size();i++) {
-            BinaryTree bt = nodes.get(i);
-            int val = bt.getOccurrences();
-            if (val < left) {
-                right = left;
-                btRight = btLeft;
-                left = val;
-                btLeft = Optional.of(bt);
-            } else if (val < right) {
-                right = val;
-                btRight = Optional.of(bt);
-            }
-        }
-        return new Pair<>(btLeft, btRight);
-    }
 }
