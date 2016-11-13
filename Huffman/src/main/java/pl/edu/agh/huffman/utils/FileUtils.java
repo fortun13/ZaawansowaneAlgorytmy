@@ -6,6 +6,7 @@ import pl.edu.agh.huffman.model.BinaryTree;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by Jakub Fortunka on 10.11.2016.
@@ -45,7 +46,10 @@ public class FileUtils {
                 r = br.read();
                 c += String.valueOf((char)r);
             }
-            bw.write(coding.findByCharacters(c).getPrefix());
+            Optional<BinaryTree> tmp = coding.findByCharacters(c);
+            if (tmp.isPresent()) {
+                bw.write(tmp.get().getPrefix());
+            }
         }
         bw.flush();
         br.close();

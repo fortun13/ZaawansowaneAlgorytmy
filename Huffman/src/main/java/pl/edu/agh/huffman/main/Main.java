@@ -16,12 +16,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class Main {
 
-    private static final int CODING_LENGTH = 6;
+    private static final int CODING_LENGTH = 3;
 
     private static final File INPUT_FILE = new File("seneca.txt");
 
     private static final File COMPRESSED_FILE = new File("compressed");
     private static final File OUTPUT_FILE = new File("decoded");
+
+    private static final int CHAR_SIZE = 7;
 
     public static void main(String[] args) {
         try {
@@ -39,7 +41,7 @@ public class Main {
                 FileUtils.compress(INPUT_FILE, COMPRESSED_FILE, btIterative, i);
                 long compressedFileCharsCountIterative = FileUtils.decompress(COMPRESSED_FILE, OUTPUT_FILE, btIterative);
 
-                long inputFileCharsCount = occurrencesAndCount.getValue()*8;
+                long inputFileCharsCount = occurrencesAndCount.getValue()*CHAR_SIZE;
 
                 System.out.println("Coding length: " + i);
                 System.out.println("K (recursive) = " + (((double)(inputFileCharsCount - compressedFileCharsCountRecursive))/(double)inputFileCharsCount));

@@ -1,15 +1,17 @@
 package pl.edu.agh.huffman.model;
 
+import java.util.Optional;
+
 /**
  * Created by Kuba Fortunka on 07.11.2016.
  */
 public class BinaryTree {
 
-    BinaryTree left;
-    BinaryTree right;
-    String characters;
-    int occurrences;
-    String prefix;
+    private BinaryTree left;
+    private BinaryTree right;
+    private String characters;
+    private int occurrences;
+    private String prefix;
 
     public BinaryTree(BinaryTree left, BinaryTree right, String characters, int occurrences, String prefix) {
         this.left = left;
@@ -19,15 +21,15 @@ public class BinaryTree {
         this.prefix = prefix;
     }
 
-    public BinaryTree findByCharacters(String s) {
+    public Optional<BinaryTree> findByCharacters(String s) {
         if (characters.equals(s)) {
-            return this;
+            return Optional.of(this);
         } else {
             if (left == null && right == null) {
-                return null;
+                return Optional.empty();
             }
-            BinaryTree tmp = left.findByCharacters(s);
-            if (tmp == null) {
+            Optional<BinaryTree> tmp = left.findByCharacters(s);
+            if (!tmp.isPresent()) {
                 return right.findByCharacters(s);
             } else {
                 return tmp;
