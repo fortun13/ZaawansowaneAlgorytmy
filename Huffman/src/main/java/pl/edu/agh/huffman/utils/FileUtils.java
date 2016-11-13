@@ -13,18 +13,15 @@ import java.util.Optional;
  */
 public class FileUtils {
 
-    public static Pair<Map<String, Integer>, Integer> readInputFile(File f, int codingLength) throws IOException {
+    public static Pair<Map<String, Integer>, Long> readInputFile(File f, int codingLength) throws IOException {
         Map<String, Integer> map = new HashMap<>();
-        int inputFileCharsCount = 0;
         BufferedReader br = new BufferedReader(new FileReader(f));
         int r;
         while ((r = br.read()) != -1) {
-            inputFileCharsCount++;
             String c = String.valueOf((char)r);
             for (int i=1;i<codingLength;i++) {
                 r = br.read();
                 c += String.valueOf((char)r);
-                inputFileCharsCount++;
             }
             if (map.containsKey(c)) {
                 map.put(c, map.get(c) + 1);
@@ -33,7 +30,7 @@ public class FileUtils {
             }
         }
         br.close();
-        return new Pair<>(map, inputFileCharsCount);
+        return new Pair<>(map, f.length());
     }
 
     public static void compress(File source, File destination, BinaryTree coding, int codingLength) throws IOException {
@@ -56,14 +53,11 @@ public class FileUtils {
         bw.close();
     }
 
-    public static int decompress(File source, File destination, BinaryTree coding) throws IOException {
+    public static long decompress(File source, File destination, BinaryTree coding) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(source));
         BufferedWriter bw = new BufferedWriter(new FileWriter(destination));
         int r;
-        int compressedFileCharsCount = 0;
         while ((r = br.read()) != -1) {
-            compressedFileCharsCount++;
-//            String c = String.valueOf((char)r);
             BinaryTree leaf = coding;
             while (leaf.getLeft() != null || leaf.getRight() != null) {
                 int tmp = Integer.valueOf(String.valueOf((char)r));
@@ -74,7 +68,6 @@ public class FileUtils {
                 }
                 if (leaf.getLeft() != null || leaf.getRight() != null) {
                     r = br.read();
-                    compressedFileCharsCount++;
                 }
             }
             bw.write(leaf.getCharacters());
@@ -82,6 +75,6 @@ public class FileUtils {
         bw.flush();
         bw.close();
         br.close();
-        return compressedFileCharsCount;
+        return source.length();
     }
 }

@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Main {
 
-    private static final int CODING_LENGTH = 3;
+    private static final int CODING_LENGTH = 4;
 
     private static final File INPUT_FILE = new File("seneca.txt");
 
@@ -25,8 +25,10 @@ public class Main {
     private static final File OUTPUT_FILE = new File("decoded");
 
     private static final int CHAR_SIZE = 7;
-//    public static final String SERIALIZED_TREE_ITERATIVE_FILE = "fIt";
-//    public static final String SERIALIZED_TREE_RECURSIVE_FILE = "fRec";
+    private static final String SERIALIZED_TREE_ITERATIVE_FILE = "fIt";
+    private static final String SERIALIZED_TREE_RECURSIVE_FILE = "fRec";
+
+    private static final boolean USE_TREE_SIZE = true;
 
     public static void main(String[] args) {
         try {
@@ -34,13 +36,7 @@ public class Main {
             HuffmanCoding huffmanIterative = new HuffmanCodingIterative();
             HuffmanCoding huffmanRecursive = new HuffmanCodingRecursive();
             for (int i=1;i<=CODING_LENGTH;i++) {
-//                FileOutputStream foutIt =new FileOutputStream(SERIALIZED_TREE_ITERATIVE_FILE);
-//                ObjectOutputStream outIt =new ObjectOutputStream(foutIt);
-//
-//                FileOutputStream foutRec = new FileOutputStream(SERIALIZED_TREE_RECURSIVE_FILE);
-//                ObjectOutputStream outRec = new ObjectOutputStream(foutRec);
-
-                Pair<Map<String, Integer>, Integer> occurrencesAndCount = FileUtils.readInputFile(INPUT_FILE, i);
+                Pair<Map<String, Integer>, Long> occurrencesAndCount = FileUtils.readInputFile(INPUT_FILE, i);
                 BinaryTree btIterative = huffmanIterative.constructTree(occurrencesAndCount.getKey());
                 BinaryTree btRecursive = huffmanRecursive.constructTree(occurrencesAndCount.getKey());
 
@@ -50,13 +46,20 @@ public class Main {
                 FileUtils.compress(INPUT_FILE, COMPRESSED_FILE, btIterative, i);
                 long compressedFileCharsCountIterative = FileUtils.decompress(COMPRESSED_FILE, OUTPUT_FILE, btIterative);
 
-//                outRec.writeObject(btRecursive);
-//                outIt.writeObject(btIterative);
-//                outRec.flush();
-//                outIt.flush();
-//
-//                compressedFileCharsCountRecursive += Files.size(new File(SERIALIZED_TREE_RECURSIVE_FILE).toPath());
-//                compressedFileCharsCountIterative += Files.size(new File(SERIALIZED_TREE_ITERATIVE_FILE).toPath());
+                if (USE_TREE_SIZE) {
+                    FileOutputStream foutIt = new FileOutputStream(SERIALIZED_TREE_ITERATIVE_FILE);
+                    ObjectOutputStream outIt = new ObjectOutputStream(foutIt);
+
+                    FileOutputStream foutRec = new FileOutputStream(SERIALIZED_TREE_RECURSIVE_FILE);
+                    ObjectOutputStream outRec = new ObjectOutputStream(foutRec);
+                    outRec.writeObject(btRecursive);
+                    outIt.writeObject(btIterative);
+                    outRec.flush();
+                    outIt.flush();
+
+                    compressedFileCharsCountRecursive += Files.size(new File(SERIALIZED_TREE_RECURSIVE_FILE).toPath());
+                    compressedFileCharsCountIterative += Files.size(new File(SERIALIZED_TREE_ITERATIVE_FILE).toPath());
+                }
 
                 long inputFileCharsCount = occurrencesAndCount.getValue()*CHAR_SIZE;
 
