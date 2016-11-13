@@ -1,11 +1,12 @@
 package pl.edu.agh.huffman.model;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 /**
  * Created by Kuba Fortunka on 07.11.2016.
  */
-public class BinaryTree {
+public class BinaryTree implements Serializable {
 
     private BinaryTree left;
     private BinaryTree right;
