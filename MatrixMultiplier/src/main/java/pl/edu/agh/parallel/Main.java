@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -20,10 +21,11 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            List<Matrix> matrices = MatrixReader.readMatrices(MATRICES, 100);
+            List<Matrix> matrices = MatrixReader.readMatrices(MATRICES, 1600);
             Pair<Matrix, Long> seq = doSequentially(matrices);
             Pair<Matrix, Long> par = doParallel(matrices);
-            System.out.println("SEQ: " + seq.getValue() + " PAR: " + par.getValue());
+            System.out.println("Matrices equals: " + seq.getKey().equals(par.getKey()));
+            System.out.println("Sequential: " + TimeUnit.NANOSECONDS.toMillis(seq.getValue()) + " Parallel: " + TimeUnit.NANOSECONDS.toMillis(par.getValue()));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -47,11 +49,11 @@ public class Main {
         final int N = matrices.size();
         for (int i=0;i<processors;i++) {
             int start = (N/processors)*i;
-            int end = (N/processors)*i+(N/processors)-1;
+            int end = (N/processors)*i+(N/processors);
             workers.add(new MatrixWorker(matrices.subList(start, end), i));
         }
         long start = System.nanoTime();
-        List<Matrix> tmpList = pool.invokeAll(workers).stream().map(x -> {
+        Optional<Matrix> tmp = pool.invokeAll(workers).stream().map(x -> {
             try {
                 return x.get();
             } catch (Exception e) {
@@ -59,9 +61,6 @@ public class Main {
             }
         })
                 .sorted((left, right) -> left.getIndex().compareTo(right.getIndex()))
-                .collect(Collectors.toList());
-        tmpList.forEach(x -> System.out.println(x.getIndex() + " " + x.columns() + " " + x.rows()));
-        Optional<Matrix> tmp = tmpList.stream()
                 .reduce((x, y) -> {
                     try {
                         return x.multiply(y);

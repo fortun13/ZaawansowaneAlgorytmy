@@ -84,4 +84,26 @@ public class Matrix {
     public Integer getIndex() {
         return index;
     }
+
+    protected BigDecimal[][] getMatrix() {
+        return matrix;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Matrix) {
+            Matrix m = (Matrix)obj;
+            BigDecimal[][] otherMatrix = m.getMatrix();
+            for (int i=0;i<matrix.length;i++) {
+                for (int j=0;j<matrix[i].length;j++) {
+                    if (!otherMatrix[i][j].equals(matrix[i][j])) {
+                        return false;
+                    }
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
 }
