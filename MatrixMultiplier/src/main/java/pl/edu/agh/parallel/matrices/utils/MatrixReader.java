@@ -1,4 +1,6 @@
-package pl.edu.agh.parallel;
+package pl.edu.agh.parallel.matrices.utils;
+
+import pl.edu.agh.parallel.matrices.model.Matrix;
 
 import java.io.*;
 import java.math.BigDecimal;

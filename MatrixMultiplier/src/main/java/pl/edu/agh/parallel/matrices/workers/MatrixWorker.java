@@ -1,4 +1,6 @@
-package pl.edu.agh.parallel;
+package pl.edu.agh.parallel.matrices.workers;
+
+import pl.edu.agh.parallel.matrices.model.Matrix;
 
 import java.util.List;
 import java.util.concurrent.Callable;

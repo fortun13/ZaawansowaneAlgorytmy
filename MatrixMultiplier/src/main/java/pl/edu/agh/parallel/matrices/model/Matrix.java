@@ -1,4 +1,6 @@
-package pl.edu.agh.parallel;
+package pl.edu.agh.parallel.matrices.model;
+
+import pl.edu.agh.parallel.matrices.exceptions.BadMatricesDimensionsException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,14 +29,12 @@ public class Matrix {
         this.columns = this.matrix[0].length;
     }
 
-    public Matrix multiply(Matrix m) throws Exception {
+    public Matrix multiply(Matrix m) throws BadMatricesDimensionsException {
         if (this.columns() != m.rows()) {
             String msg = "Bad dimensions! :( \n";
             msg += "A.columns = " + this.columns() + "\n";
             msg += "B.rows = " + m.rows();
-//            System.out.println(msg);
-//            return null;
-            throw new Exception(msg);
+            throw new BadMatricesDimensionsException(msg);
         } else {
             List<List<BigDecimal>> tmp = new ArrayList<>();
             for (int i=0;i<this.rows();i++) {
@@ -53,24 +53,24 @@ public class Matrix {
         }
     }
 
-    public int columns() {
+    private int columns() {
         return this.columns;
     }
 
-    public int rows() {
+    private int rows() {
         return this.rows;
     }
 
-    public BigDecimal getValue(int col, int row) {
+    private BigDecimal getValue(int col, int row) {
         return matrix[row][col];
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int i=0;i<matrix.length;i++) {
-            for (int j=0;j<matrix[i].length;j++) {
-                sb.append(matrix[i][j]).append(" ");
+        for (BigDecimal[] aMatrix : matrix) {
+            for (BigDecimal anAMatrix : aMatrix) {
+                sb.append(anAMatrix).append(" ");
             }
             sb.append("\n");
         }
@@ -85,7 +85,7 @@ public class Matrix {
         return index;
     }
 
-    protected BigDecimal[][] getMatrix() {
+    private BigDecimal[][] getMatrix() {
         return matrix;
     }
 
