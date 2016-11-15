@@ -21,7 +21,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            List<Matrix> matrices = MatrixReader.readMatrices(MATRICES, 1600);
+            List<Matrix> matrices = MatrixReader.readMatrices(MATRICES, 1008);
             Pair<Matrix, Long> seq = doSequentially(matrices);
             Pair<Matrix, Long> par = doParallel(matrices);
             System.out.println("Matrices equals: " + seq.getKey().equals(par.getKey()));
@@ -49,7 +49,7 @@ public class Main {
         final int N = matrices.size();
         for (int i=0;i<processors;i++) {
             int start = (N/processors)*i;
-            int end = (N/processors)*i+(N/processors);
+            int end = (N/processors)*(i+1);
             workers.add(new MatrixWorker(matrices.subList(start, end), i));
         }
         long start = System.nanoTime();
@@ -68,6 +68,7 @@ public class Main {
                         throw new IllegalStateException(e);
                     }
                 });
+        pool.shutdown();
         return new Pair<>(tmp.get(), (System.nanoTime() - start));
     }
 }
